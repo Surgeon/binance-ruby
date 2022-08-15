@@ -6,12 +6,13 @@ module Binance
         def send!(api_key_type: :none, headers: {}, method: :get, path: "/", params: {}, security_type: :none, tld: Configuration.tld, api_key: nil, api_secret_key: nil)
           Configuration.validate_tld!(tld)
           binance_uri = ENV['BINANCE_TEST_NET_ENABLE'] ? "https://testnet.binance.vision" : "https://api.binance.#{tld}"
+          binance_uri = 'https://fapi.binance.com' if security_type == :features
           self.base_uri binance_uri
 
           raise Error.new(message: "invalid security type #{security_type}") unless security_types.include?(security_type)
           all_headers = default_headers(api_key_type: api_key_type, security_type: security_type, api_key: api_key)
           params.delete_if { |k, v| v.nil? }
-          if %w(trade user_data).include?(security_type&.to_s)
+          if %w(trade user_data features).include?(security_type&.to_s)
             signature = signed_request_signature(params: params, api_secret_key: api_secret_key)
             params.merge!(signature: signature)
           end
@@ -52,7 +53,7 @@ module Binance
         end
 
         def security_types
-          [:none, :trade, :user_data, :user_stream, :market_data, :margin].freeze
+          [:none, :trade, :user_data, :user_stream, :market_data, :margin, :features].freeze
         end
 
         def signed_request_signature(params:, api_secret_key: nil)
