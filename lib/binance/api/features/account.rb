@@ -3,10 +3,26 @@ module Binance
     module Features
       class Account
         class << self
-          def balance(recvWindow: nil, api_key: nil, api_secret_key: nil)
+          def balance!(recvWindow: nil, api_key: nil, api_secret_key: nil)
             timestamp = Configuration.timestamp
             params = { recvWindow: recvWindow, timestamp: timestamp }
             Request.send!(api_key_type: :read_info, path: "/fapi/v2/balance",
+                          params: params.delete_if { |key, value| value.nil? },
+                          security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
+          end
+
+          def position_risk!(symbol: nil, recvWindow: nil, api_key: nil, api_secret_key: nil)
+            timestamp = Configuration.timestamp
+            params = { symbol: symbol, recvWindow: recvWindow, timestamp: timestamp }
+            Request.send!(api_key_type: :read_info, path: "/fapi/v2/positionRisk",
+                          params: params.delete_if { |key, value| value.nil? },
+                          security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
+          end
+
+          def start_user_stream!(api_key: nil, api_secret_key: nil)
+            timestamp = Configuration.timestamp
+            params = { timestamp: timestamp }
+            Request.send!(api_key_type: :read_info, method: :post, path: "/fapi/v1/listenKey",
                           params: params.delete_if { |key, value| value.nil? },
                           security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
           end
