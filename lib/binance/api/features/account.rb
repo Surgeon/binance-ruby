@@ -27,6 +27,14 @@ module Binance
                           security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
           end
 
+          def keepalive_user_stream!(api_key: nil, api_secret_key: nil)
+            timestamp = Configuration.timestamp
+            params = { timestamp: timestamp }
+            Request.send!(api_key_type: :read_info, method: :put, path: "/fapi/v1/listenKey",
+                          params: params.delete_if { |key, value| value.nil? },
+                          security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
+          end
+
           private
 
           def ensure_required_create_keys!(params:)

@@ -6,7 +6,9 @@ module Binance
         def send!(api_key_type: :none, headers: {}, method: :get, path: "/", params: {}, security_type: :none, tld: Configuration.tld, api_key: nil, api_secret_key: nil)
           Configuration.validate_tld!(tld)
           binance_uri = ENV['BINANCE_TEST_NET_ENABLE'] ? "https://testnet.binance.vision" : "https://api.binance.#{tld}"
-          binance_uri = 'https://fapi.binance.com' if security_type == :features
+          if security_type == :features
+            binance_uri = ENV['BINANCE_TEST_NET_ENABLE'] ? "https://testnet.binancefuture.com" : 'https://fapi.binance.com'
+          end
           self.base_uri binance_uri
 
           raise Error.new(message: "invalid security type #{security_type}") unless security_types.include?(security_type)
