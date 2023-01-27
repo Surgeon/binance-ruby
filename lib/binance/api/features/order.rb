@@ -5,12 +5,14 @@ module Binance
         class << self
           def create!(newClientOrderId: nil, newOrderResponseType: nil, closePosition: nil, reduceOnly: nil,
                       price: nil, quantity: nil, recvWindow: nil, stopPrice: nil, symbol: nil,
+                      callbackRate: nil, activationPrice: nil, workingType: nil,
                       side: nil, type: nil, timeInForce: nil, test: false, api_key: nil, api_secret_key: nil)
             timestamp = Configuration.timestamp
             params = {
               newClientOrderId: newClientOrderId, reduceOnly: reduceOnly,
               newOrderRespType: newOrderResponseType, price: price, quantity: quantity, closePosition: closePosition,
               recvWindow: recvWindow, stopPrice: stopPrice, symbol: symbol, side: side,
+              callbackRate: callbackRate, activationPrice: activationPrice, workingType: workingType,
               type: type, timeInForce: timeInForce, timestamp: timestamp,
             }.delete_if { |key, value| value.nil? }
             ensure_required_create_keys!(params: params)
