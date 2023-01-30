@@ -21,6 +21,24 @@ module Binance
                           security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
           end
 
+          def leverage_bracket!(symbol: nil, recvWindow: nil, api_key: nil, api_secret_key: nil)
+            timestamp = Configuration.timestamp
+            params = { symbol: symbol, recvWindow: recvWindow, timestamp: timestamp }
+            ensure_required_create_keys!(params: params)
+            Request.send!(api_key_type: :read_info, path: "/fapi/v1/leverageBracket",
+                          params: params.delete_if { |key, value| value.nil? },
+                          security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
+          end
+
+          def leverage_update!(symbol: nil, leverage: nil, recvWindow: nil, api_key: nil, api_secret_key: nil)
+            timestamp = Configuration.timestamp
+            params = { symbol: symbol, leverage: leverage, recvWindow: recvWindow, timestamp: timestamp }
+            ensure_required_create_keys!(params: params)
+            Request.send!(api_key_type: :trading, method: :post, path: "/fapi/v1/leverage",
+                          params: params.delete_if { |key, value| value.nil? },
+                          security_type: :features, api_key: api_key, api_secret_key: api_secret_key)
+          end
+
 
           private
 
